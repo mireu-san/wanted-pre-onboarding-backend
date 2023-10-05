@@ -1,13 +1,15 @@
 from django.db import models
-from CompanyApp.models import Company
 
 
 class JobPosting(models.Model):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    position = models.CharField(max_length=100)
-    reward = models.IntegerField()
-    content = models.TextField()
-    technology = models.CharField(max_length=50)
+    """Model representing a job posting."""
 
-    class Meta:
-        app_label = "JobPostingApp"
+    company_id = models.IntegerField()
+    position = models.CharField(max_length=255)
+    reward = models.IntegerField()
+    description = models.TextField()
+    tech_stack = models.CharField(max_length=255)
+
+    def __str__(self):
+        """String representation of a job posting."""
+        return f"{self.position} at Company ID {self.company_id}"
