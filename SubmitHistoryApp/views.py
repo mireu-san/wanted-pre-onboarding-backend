@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import SubmitHistory
+from .serializers import SubmitHistorySerializer
 
-# Create your views here.
+
+class SubmitHistoryViewSet(viewsets.ModelViewSet):
+    queryset = SubmitHistory.objects.all()
+    serializer_class = SubmitHistorySerializer
