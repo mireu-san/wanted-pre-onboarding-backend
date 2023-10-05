@@ -5,4 +5,4 @@ from .models import SubmitHistory
 class SubmitHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubmitHistory
-        fields = '__all__'
+        fields = "__all__"

@@ -8,7 +8,7 @@ from .models import SubmitHistory
 class SubmitHistoryAPITest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create(username='testuser', email='test@example.com')
+        self.user = User.objects.create(username="testuser", email="test@example.com")
         self.job_posting = JobPosting.objects.create(
             company_id=1,
             position="Example Position",
@@ -19,8 +19,11 @@ class SubmitHistoryAPITest(TestCase):
         )
 
     def test_create_submit_history(self):
-        response = self.client.post('/submit_history/', {
-            'user_id': self.user.id,
-            'job_posting_id': self.job_posting.id,
-        })
+        response = self.client.post(
+            "/submit_history/",
+            {
+                "user_id": self.user.id,
+                "job_posting_id": self.job_posting.id,
+            },
+        )
         self.assertEqual(response.status_code, 201)

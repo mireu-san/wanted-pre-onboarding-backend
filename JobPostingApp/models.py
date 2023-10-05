@@ -8,3 +8,6 @@ class JobPosting(models.Model):
     reward = models.IntegerField()
     content = models.TextField()
     technology = models.CharField(max_length=50)
+
+    class Meta:
+        app_label = "JobPostingApp"

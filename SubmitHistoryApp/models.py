@@ -9,4 +9,5 @@ class SubmitHistory(models.Model):
     applied_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ['user', 'job_posting']
+        app_label = "SubmitHistoryApp"
+        unique_together = ["user", "job_posting"]

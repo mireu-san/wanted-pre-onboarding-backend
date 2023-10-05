@@ -3,8 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import SubmitHistoryViewSet
 
 router = DefaultRouter()
-router.register(r'submit_history', SubmitHistoryViewSet)
+router.register(r"submit_history", SubmitHistoryViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

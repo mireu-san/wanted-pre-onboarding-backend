@@ -8,9 +8,12 @@ class UserAPITest(TestCase):
         self.client = APIClient()
 
     def test_create_user(self):
-        response = self.client.post('/users/', {
-            'username': 'testuser',
-            'email': 'test@example.com',
-            # 여기에 추가적인 필드를 넣을 수 있습니다.
-        })
+        response = self.client.post(
+            "/users/",
+            {
+                "username": "testuser",
+                "email": "test@example.com",
+                # 여기에 추가적인 필드를 넣을 수 있습니다.
+            },
+        )
         self.assertEqual(response.status_code, 201)
