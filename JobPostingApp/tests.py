@@ -46,6 +46,36 @@ class JobPostingAPITest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["position"], "Frontend Developer")
 
+    def test_retrieve_other_job_postings_of_company(self):
+        # 두 개의 채용공고를 해당 회사에 등록
+        job_posting1 = JobPosting.objects.create(
+            company=self.company,
+            position="Frontend Developer",
+            reward=900000,
+            description="Hiring frontend devs.",
+        )
+        job_posting1.tech_stack.add(self.tech1)
+
+        job_posting2 = JobPosting.objects.create(
+            company=self.company,
+            position="Backend Developer",
+            reward=1100000,
+            description="Hiring backend devs.",
+        )
+        job_posting2.tech_stack.add(self.tech2)
+
+        # 첫 번째 채용공고를 조회
+        response = self.client.get(f"/job_posting/job_postings/{job_posting1.id}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["position"], "Frontend Developer")
+        self.assertIn("other_job_postings", response.data)
+
+        # 반환된 '다른 채용공고'에 두 번째 채용공고가 포함되어 있는지 확인
+        other_postings = response.data["other_job_postings"]
+        self.assertTrue(
+            any(posting["id"] == job_posting2.id for posting in other_postings)
+        )
+
     def test_update_job_posting(self):
         job_posting = JobPosting.objects.create(
             company=self.company,
