@@ -1,5 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 
 
 class CustomUserManager(BaseUserManager):
@@ -19,11 +23,28 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, username, password, **extra_fields)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=255, unique=True)
-    # 필요한 추가 필드들...
-    # 예: 프로필 사진, 자기소개 등
+
+    is_active = models.BooleanField(default=True)  # 이 필드는 사용자가 활성 상태인지 표시.
+    is_staff = models.BooleanField(default=False)
+
+    # groups, user_permissions 필드는 권한 관리를 위해 사용.
+    groups = models.ManyToManyField(
+        "auth.Group",
+        blank=True,
+        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+        related_name="userapp_user_set",
+        related_query_name="userapp_user",
+    )
+    user_permissions = models.ManyToManyField(
+        "auth.Permission",
+        blank=True,
+        help_text="Specific permissions for this user.",
+        related_name="userapp_user_set",
+        related_query_name="userapp_user",
+    )
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
