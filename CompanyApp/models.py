@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Company(models.Model):
@@ -10,8 +11,10 @@ class Company(models.Model):
         max_length=100, unique=True
     )  # Considering the name to be unique
     description = models.TextField()
-    established_at = models.DateField()  # If time info is not required
-    founder = models.CharField(max_length=255)  # Allowing for longer names
+    established_at = models.DateField()
+    founder = models.CharField(max_length=255)
+    country = models.CharField(max_length=50)
+    region = models.CharField(max_length=100)
 
     class Meta:
         db_table = "companies"  # Explicitly defining the table name
