@@ -11,3 +11,42 @@ class UserAPITest(APITestCase):
         }
         response = self.client.post("/user/", data, format="json")
         self.assertEqual(response.status_code, 201)
+
+    def test_retrieve_user(self):
+        user = User.objects.create_user(
+            email="retrieve@example.com", username="retrieveuser", password="testpass"
+        )
+        response = self.client.get(f"/user/{user.id}/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["username"], "retrieveuser")
+
+    def test_update_user(self):
+        user = User.objects.create_user(
+            email="update@example.com", username="updateuser", password="testpass"
+        )
+        # API 호출 부분
+        response = self.client.put(
+            f"/user/{user.id}/",
+            {
+                "username": "updateduser",
+                "email": "updated@example.com",
+                "password": "newpassword123",  # API 로직: password 필수성 요구 (업데이트 시)
+            },
+            format="json",
+        )
+        # 응답의 상태 코드와 데이터 출력
+        print(response.status_code)
+        print(response.data)
+        # 응답의 상태 코드와 데이터 검증
+        self.assertEqual(response.status_code, 200)
+        user.refresh_from_db()
+        self.assertEqual(user.username, "updateduser")
+
+    def test_delete_user(self):
+        user = User.objects.create_user(
+            email="delete@example.com", username="deleteuser", password="testpass"
+        )
+        response = self.client.delete(f"/user/{user.id}/")
+        self.assertEqual(response.status_code, 204)
+        with self.assertRaises(User.DoesNotExist):
+            User.objects.get(id=user.id)

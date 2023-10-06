@@ -20,3 +20,4 @@ perf – performance improvements
 ci – continuous integration related
 build – changes that affect the build system or external dependencies
 revert – reverts a previous commit
+<!-- https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/ -->
