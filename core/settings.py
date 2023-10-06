@@ -40,9 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
+    "django.contrib.staticfiles",  # Swagger related!
     # Django 외부 앱
     "rest_framework",  # DRF
+    "drf_yasg",  # Swagger
     # Django 내부 앱
     "CompanyApp",
     "JobPostingApp",
