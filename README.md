@@ -39,3 +39,12 @@ build – changes that affect the build system or external dependencies
 
 revert – reverts a previous commit
 <!-- https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/ -->
+
+
+
+## Known issue:
+- 점검 중, CompanyApp 에서 포착한 __init__ 마이그레이션 적용 문제.
+특히 해당 부분의 DB migration을 초기화 한 후 재차 migrate 을 시도했지만, 유독 이 CompanyApp 에서만 migrate 가 적용되지 않았음. 해결 방법은 직접 psql 의 현 DB에 진입 후, 다음과 같이 쿼리문을 보내서 해당 문제되는 CompanyApp 모든 행 부분을 삭제.
+`dbwanted=# DELETE FROM django_migrations WHERE app = 'CompanyApp';`
+이로서 다시 migrate 적용이 가능 해 졌음.
+원인은 최초에 해당 앱의 모델 변경 후, DB 초기화를 위해 삭제 했지만 알수 없는 이유로 마이그레이션 파일이 DB 쪽에서 예상대로 작동하지 않음. 이에, 직접 조치.
