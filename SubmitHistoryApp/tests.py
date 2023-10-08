@@ -4,6 +4,7 @@ from SubmitHistoryApp.models import SubmitHistory
 from JobPostingApp.models import JobPosting, TechStack, Company
 from UserApp.models import User
 from rest_framework import status
+import datetime
 
 
 class SubmitHistoryAPITest(TestCase):
@@ -17,7 +18,9 @@ class SubmitHistoryAPITest(TestCase):
 
         # Company 객체 생성
         self.company = Company.objects.create(
-            name="Example Company", description="This is an example company."
+            name="Example Company",
+            description="This is an example company.",
+            established_at=datetime.date.today(),  # 여기에 established_at 값을 추가합니다.
         )
 
         # TechStack 객체 생성
