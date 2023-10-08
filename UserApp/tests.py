@@ -3,7 +3,10 @@ from .models import User
 
 
 class UserAPITest(APITestCase):
+    """사용자 관련 API 테스트 케이스"""
+
     def test_create_user(self):
+        """사용자 생성 API 테스트"""
         data = {
             "username": "testuser",
             "password": "testpass",
@@ -13,6 +16,7 @@ class UserAPITest(APITestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_retrieve_user(self):
+        """특정 사용자 조회 API 테스트"""
         user = User.objects.create_user(
             email="retrieve@example.com", username="retrieveuser", password="testpass"
         )
@@ -21,6 +25,7 @@ class UserAPITest(APITestCase):
         self.assertEqual(response.data["username"], "retrieveuser")
 
     def test_update_user(self):
+        """사용자 정보 수정 API 테스트"""
         user = User.objects.create_user(
             email="update@example.com", username="updateuser", password="testpass"
         )
@@ -43,6 +48,7 @@ class UserAPITest(APITestCase):
         self.assertEqual(user.username, "updateduser")
 
     def test_delete_user(self):
+        """사용자 삭제 API 테스트"""
         user = User.objects.create_user(
             email="delete@example.com", username="deleteuser", password="testpass"
         )

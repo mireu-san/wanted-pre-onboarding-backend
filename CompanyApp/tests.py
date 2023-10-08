@@ -6,7 +6,7 @@ from rest_framework import status
 
 class CompanyAPITest(TestCase):
     def setUp(self):
-        # API 클라이언트를 초기화하고 테스트용 회사 데이터를 생성합니다.
+        """테스트를 위한 사전 설정"""
         self.client = APIClient()
         self.company = Company.objects.create(
             name="Paper Company",
@@ -18,11 +18,13 @@ class CompanyAPITest(TestCase):
         )
 
     def test_retrieve_company(self):
+        """특정 회사의 정보를 가져오는 API 테스트"""
         response = self.client.get(f"/company/companies/{self.company.id}/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["name"], "Paper Company")
 
     def test_create_company(self):
+        """회사를 새로 생성하는 API 테스트"""
         response = self.client.post(
             "/company/companies/",
             {
@@ -39,7 +41,7 @@ class CompanyAPITest(TestCase):
         self.assertEqual(response.data["name"], "Black Company")
 
     def test_update_company(self):
-        # 회사 정보를 수정하는 API를 호출합니다.
+        """회사 정보를 업데이트하는 API 테스트"""
         response = self.client.put(
             f"/company/companies/{self.company.id}/",
             {
@@ -59,7 +61,7 @@ class CompanyAPITest(TestCase):
         self.assertEqual(self.company.region, "NY")
 
     def test_delete_company(self):
-        # 회사 정보를 삭제하는 API를 호출합니다.
+        """회사 정보를 삭제하는 API 테스트"""
         response = self.client.delete(f"/company/companies/{self.company.id}/")
         self.assertEqual(response.status_code, 204)  # 204: No Content (성공적으로 삭제됨)
         # 실제로 회사 정보가 삭제되었는지 확인합니다.
@@ -67,9 +69,7 @@ class CompanyAPITest(TestCase):
             Company.objects.get(id=self.company.id)
 
     def test_create_company_with_missing_name(self):
-        """
-        'name' 필드가 누락된 경우 400 Bad Request 응답이 반환되는지 테스트합니다.
-        """
+        """이름 필드 없이 회사 생성 API 호출 시 오류가 반환되는지 테스트"""
         response = self.client.post(
             "/company/companies/",
             {
@@ -83,9 +83,7 @@ class CompanyAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_company_with_duplicate_name(self):
-        """
-        이미 존재하는 회사 이름으로 새로운 회사를 생성하려고 할 때, 오류 응답이 반환되는지 테스트합니다.
-        """
+        """중복된 이름으로 회사 생성 API 호출 시 오류가 반환되는지 테스트"""
         Company.objects.create(
             name="Duplicate Company",
             country="KR",
@@ -108,9 +106,7 @@ class CompanyAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_company_with_invalid_date(self):
-        """
-        'established_at' 필드에 잘못된 날짜 형식을 사용했을 때, 오류 응답이 반환되는지 테스트합니다.
-        """
+        """유효하지 않은 날짜 형식으로 회사 생성 API 호출 시 오류가 반환되는지 테스트"""
         response = self.client.post(
             "/company/companies/",
             {
@@ -123,6 +119,3 @@ class CompanyAPITest(TestCase):
             },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    # 인증/인가 관련 테스트는 현재의 API 설정에 따라 달라질 수 있습니다.
-    # 인증/인가가 필요하다면, 해당 부분에 대한 테스트를 추가로 구현해야 합니다.

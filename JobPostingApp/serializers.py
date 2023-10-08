@@ -3,12 +3,16 @@ from .models import JobPosting, TechStack
 
 
 class TechStackSerializer(serializers.ModelSerializer):
+    """기술 스택을 나타내는 시리얼라이저"""
+
     class Meta:
         model = TechStack
         fields = ("name",)
 
 
 class OtherJobPostingsSerializer(serializers.ModelSerializer):
+    """회사의 다른 채용공고를 나타내는 시리얼라이저"""
+
     tech_stack = TechStackSerializer(many=True, read_only=True)
 
     class Meta:
@@ -17,6 +21,8 @@ class OtherJobPostingsSerializer(serializers.ModelSerializer):
 
 
 class JobPostingSerializer(serializers.ModelSerializer):
+    """채용공고를 나타내는 시리얼라이저"""
+
     tech_stack = serializers.ListField(child=serializers.CharField(), write_only=True)
 
     class Meta:
@@ -24,7 +30,7 @@ class JobPostingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate_tech_stack(self, tech_stack_names):
-        """기술 스택 유효성 검사."""
+        """기술 스택의 유효성을 검사합니다."""
         if not isinstance(tech_stack_names, list):
             raise serializers.ValidationError(
                 "tech_stack must be a list of tech stack names."
@@ -42,6 +48,7 @@ class JobPostingSerializer(serializers.ModelSerializer):
         return tech_stacks
 
     def create(self, validated_data):
+        """새로운 채용공고를 생성합니다."""
         tech_stacks = validated_data.pop("tech_stack", [])
         job_posting = JobPosting.objects.create(**validated_data)
         job_posting.tech_stack.add(*tech_stacks)
@@ -49,6 +56,7 @@ class JobPostingSerializer(serializers.ModelSerializer):
         return job_posting
 
     def to_representation(self, instance):
+        """채용공고의 표현을 커스텀화합니다."""
         data = super().to_representation(instance)
         data["tech_stack"] = [tech.name for tech in instance.tech_stack.all()]
         return data

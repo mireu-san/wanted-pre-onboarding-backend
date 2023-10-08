@@ -8,14 +8,13 @@ from .serializers import SubmitHistorySerializer
 
 
 class SubmitHistoryViewSet(viewsets.ModelViewSet):
-    """
-    제출 이력을 보거나 편집할 수 있는 API 엔드포인트입니다.
-    """
+    """제출 이력을 보거나 편집할 수 있는 API 엔드포인트입니다."""
 
     queryset = SubmitHistory.objects.all()
     serializer_class = SubmitHistorySerializer
 
     def create(self, request, *args, **kwargs):
+        """제출 이력 생성 시 해당 회사의 다른 채용공고 정보도 반환합니다."""
         response = super().create(request, *args, **kwargs)
 
         if response.status_code == status.HTTP_201_CREATED:

@@ -162,7 +162,7 @@ class JobPostingAPITest(TestCase):
             description="Hiring frontend devs at TechCorp.",
         )
 
-        # 다른 회사의 채용공고
+        """다른 회사의 채용공고"""
         JobPosting.objects.create(
             company=self.other_company,
             position="Backend Developer",
