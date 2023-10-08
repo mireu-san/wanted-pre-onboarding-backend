@@ -5,9 +5,9 @@ from JobPostingApp.models import JobPosting
 
 class SubmitHistory(models.Model):
     STATUS_CHOICES = [
-        ("applied", "Applied"),
-        ("rejected", "Rejected"),
-        ("accepted", "Accepted"),
+        ("applied", "지원완료"),
+        ("rejected", "불합격"),
+        ("accepted", "합격"),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
