@@ -10,4 +10,7 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_establishment_duration(self, obj):
+        """
+        회사의 설립된 기간(연도 수)을 반환합니다.
+        """
         return obj.get_establishment_duration()
