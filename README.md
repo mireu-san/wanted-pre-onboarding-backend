@@ -1,3 +1,28 @@
+## Table of Contents
+- [Table of Contents](#table-of-contents)
+- [개요.](#개요)
+- [사용 기술.](#사용-기술)
+- [Limitation.](#limitation)
+- [Git Convention:](#git-convention)
+- [Known issue:](#known-issue)
+  - [1. 점검 중, CompanyApp 에서 포착한 __init__ 마이그레이션 적용 문제.](#1-점검-중-companyapp-에서-포착한-init-마이그레이션-적용-문제)
+  - [2. serializer 구조 문제로 인한, 생성된 채용 공고 조회 불가 문제.](#2-serializer-구조-문제로-인한-생성된-채용-공고-조회-불가-문제)
+  - [3. DB 와 마이그레이션 - JobPosting 모델에 관련된 마이그레이션 이슈.](#3-db-와-마이그레이션---jobposting-모델에-관련된-마이그레이션-이슈)
+  - [4. Serializers.py in JobPostingApp - tech\_stack 의 출력 이상.](#4-serializerspy-in-jobpostingapp---tech_stack-의-출력-이상)
+- [ERD](#erd)
+- [Entity-Relationship Diagram (ERD)](#entity-relationship-diagram-erd)
+  - [Tables:](#tables)
+    - [1. Company:](#1-company)
+    - [2. TechStack:](#2-techstack)
+    - [3. JobPosting:](#3-jobposting)
+    - [4. JobPosting\_TechStack:](#4-jobposting_techstack)
+    - [5. User:](#5-user)
+    - [6. Group:](#6-group)
+    - [7. Group\_User:](#7-group_user)
+    - [8. Permission:](#8-permission)
+    - [9. Permission\_User:](#9-permission_user)
+    - [10. SubmitHistory:](#10-submithistory)
+
 ## 개요.
 '채용 서비스' 를 ERD, RDBMS로 개발중인 간이 프로젝트 입니다.
 
@@ -14,30 +39,29 @@ Docker 컨테이너화 대신, 파이썬 가상환경 적용.
 토큰 설정 생략.
 
 ## Git Convention:
-feat – a new feature is introduced with the changes
+feat – 변경 사항과 함께 새로운 기능이 도입된 경우
 
-fix – a bug fix has occurred
+fix – 버그 수정 발생
 
-chore – changes that do not relate to a fix or feature and don't modify src or test 
+chore – 수정 사항/기능과 관련이 없음. 또는 소스나 테스트를 수정하지 않은 변경 사항. (이 프로젝트의 경우, 종속성 업데이트 수정 관련 발생 시, 여기에 포함)
 
-files (for example updating dependencies)
+<!-- files - 변경 사항이 있지만, 파일 수정이 없는 경우. -->
 
-refactor – refactored code that neither fixes a bug nor adds a feature
+refactor – 버그 수정 또는 기능을 추가하지 않는 리팩토링된 코드
 
-docs – updates to documentation such as a the README or other markdown files
+docs – README 또는 앱 관련 문서.
 
-style – changes that do not affect the meaning of the code, likely related to code 
-formatting such as white-space, missing semi-colons, and so on.
+<!-- style – 마크다운 및 UI 관련. -->
 
-test – including new or correcting previous tests
+test – 새 테스트 스크립트 수정
 
-perf – performance improvements
+<!-- perf – 성능 개선 -->
 
-ci – continuous integration related
+<!-- ci – CI/CD 같은 기능 관련. -->
 
-build – changes that affect the build system or external dependencies
+<!-- build – 빌드 시스템 또는 외부 종속성에 영향을 미치는 변경 사항. -->
 
-revert – reverts a previous commit
+<!-- revert – reverts a previous commit -->
 <!-- https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/ -->
 
 
@@ -46,17 +70,28 @@ revert – reverts a previous commit
 
 ### 1. 점검 중, CompanyApp 에서 포착한 __init__ 마이그레이션 적용 문제.
 특히 해당 부분의 DB migration을 초기화 한 후 재차 migrate 을 시도했지만, 유독 이 CompanyApp 에서만 migrate 가 적용되지 않았음. 해결 방법은 직접 psql 의 현 DB에 진입 후, 다음과 같이 쿼리문을 보내서 해당 문제되는 CompanyApp 모든 행 부분을 삭제.
+
 `dbwanted=# DELETE FROM django_migrations WHERE app = 'CompanyApp';`
+
 이로서 다시 migrate 적용이 가능 해 졌음.
+
 원인은 최초에 해당 앱의 모델 변경 후, DB 초기화를 위해 삭제 했지만 알수 없는 이유로 마이그레이션 파일이 DB 쪽에서 예상대로 작동하지 않음. 이에, 직접 조치.
 
 ### 2. serializer 구조 문제로 인한, 생성된 채용 공고 조회 불가 문제.
 문제 원인:
-Serializer 구조: JobPostingSerializer 내에서 other_job_postings 필드는 현재 채용공고와 동일한 회사의 다른 채용공고를 나타내는데, 채용공고 생성 시에도 이 필드가 작동하게 됩니다.
+
+Serializer 구조: 
+
+JobPostingSerializer 내에서 other_job_postings 필드는 현재 채용공고와 동일한 회사의 다른 채용공고를 나타내는데, 채용공고 생성 시에도 이 필드가 작동하게 됩니다.
 DB 저장 시점: 새로운 채용공고를 생성할 때, 해당 채용공고는 아직 데이터베이스에 저장되지 않았습니다. 따라서 get_other_job_postings 메서드에서 해당 채용공고를 제외하려고 할 때, 아직 DB에 저장되지 않은 채용공고의 id를 알 수 없기 때문에 제외하지 못하게 됩니다.
+
 해결 방법:
+
 to_representation 오버라이딩: Serializer의 to_representation 메서드를 오버라이드하여, 채용공고가 아직 DB에 저장되지 않았을 경우 other_job_postings 필드를 반환하지 않게 조절하였습니다. 이를 통해 새로운 채용공고 생성 시 해당 필드가 빈 배열로 반환되는 문제를 해결하였습니다.
-필드 조건 변경: 채용공고 생성 요청에서는 other_job_postings 필드가 필요 없으므로, 이 필드를 생성 시점에서 제외하였습니다.
+
+필드 조건 변경: 
+
+채용공고 생성 요청에서는 other_job_postings 필드가 필요 없으므로, 이 필드를 생성 시점에서 제외하였습니다.
 이렇게 변경을 통해 채용공고 생성 시 other_job_postings 필드가 적절하게 작동하도록 조정하였습니다.
 
 ### 3. DB 와 마이그레이션 - JobPosting 모델에 관련된 마이그레이션 이슈.
