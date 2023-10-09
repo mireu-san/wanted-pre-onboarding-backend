@@ -1,10 +1,9 @@
-from rest_framework.response import Response
-from JobPostingApp.serializers import JobPostingSerializer
-from JobPostingApp.models import JobPosting
-
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from .models import SubmitHistory
 from .serializers import SubmitHistorySerializer
+from JobPostingApp.serializers import JobPostingSerializer
+from JobPostingApp.models import JobPosting
+from rest_framework.response import Response
 
 
 class SubmitHistoryViewSet(viewsets.ModelViewSet):
@@ -12,6 +11,10 @@ class SubmitHistoryViewSet(viewsets.ModelViewSet):
 
     queryset = SubmitHistory.objects.all()
     serializer_class = SubmitHistorySerializer
+
+    """검색 기능 - 사용자 이름, 채용공고 제목, 지원 상태로 검색할 수 있습니다."""
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["user__username", "job_posting__position", "status"]
 
     def create(self, request, *args, **kwargs):
         """제출 이력 생성 시 해당 회사의 다른 채용공고 정보도 반환합니다."""
