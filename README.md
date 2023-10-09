@@ -95,3 +95,56 @@ to_representation 오버라이딩: Serializer의 to_representation 메서드를 
 - `to_representation` 메서드를 사용하여 응답 데이터의 형태를 조정하여, `tech_stack`을 원하는 형태로 출력하도록 수정.
 
 이를 통해 `tech_stack` 데이터가 올바르게 처리되었으며, API 응답에서도 원하는 형태로 `tech_stack` 정보가 출력되게 되었습니다.
+
+## ERD
+
+## Entity-Relationship Diagram (ERD)
+
+이 프로젝트의 데이터베이스 구조는 다음과 같은 엔터티와 관계를 가지고 있습니다. 아래의 ERD 이미지와 함께 각 테이블과 필드, 그리고 테이블 간의 참조 관계를 확인하실 수 있습니다.
+
+![ERD Image](./assets/ERD_wanted_recruit_service.png)
+
+### Tables:
+
+#### 1. Company:
+- **Fields**: `id`, `name`, `description`, `established_at`, `founder`, `country`, `region`
+- **Description**: 회사의 기본 정보를 저장하는 테이블입니다.
+
+#### 2. TechStack:
+- **Fields**: `id`, `name`
+- **Description**: 사용하는 기술 스택 정보를 저장하는 테이블입니다.
+
+#### 3. JobPosting:
+- **Fields**: `id`, `company_id`, `position`, `reward`, `description`
+- **Relationships**: `Company` (ForeignKey), `TechStack` (ManyToMany)
+- **Description**: 채용공고 정보를 저장하며, 회사와 기술 스택 정보와 연결됩니다.
+
+#### 4. JobPosting_TechStack:
+- **Fields**: `job_posting_id`, `tech_stack_id`
+- **Description**: 채용공고와 기술 스택 간의 다대다 관계를 관리하는 연결 테이블입니다.
+
+#### 5. User:
+- **Fields**: `id`, `email`, `username`, `password`, `is_active`, `is_staff`
+- **Description**: 사용자 정보를 저장하는 테이블입니다.
+
+#### 6. Group:
+- **Fields**: `id`
+- **Description**: 사용자 그룹 정보를 저장하는 테이블입니다.
+
+#### 7. Group_User:
+- **Fields**: `user_id`, `group_id`
+- **Description**: 사용자와 그룹 간의 관계를 관리하는 연결 테이블입니다.
+
+#### 8. Permission:
+- **Fields**: `id`
+- **Description**: 사용자 권한 정보를 저장하는 테이블입니다.
+
+#### 9. Permission_User:
+- **Fields**: `user_id`, `permission_id`
+- **Description**: 사용자와 권한 간의 관계를 관리하는 연결 테이블입니다.
+
+#### 10. SubmitHistory:
+- **Fields**: `id`, `status`, `apply_date`, `user_id`, `job_posting_id`
+- **Relationships**: `User` (ForeignKey), `JobPosting` (ForeignKey)
+- **Description**: 사용자의 지원 이력을 저장하며, 사용자와 채용공고 정보와 연결됩니다.
+
