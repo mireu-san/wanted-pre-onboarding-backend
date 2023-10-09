@@ -24,12 +24,10 @@
     - [10. SubmitHistory:](#10-submithistory)
 
 ## 개요.
-'채용 서비스' 를 ERD, RDBMS로 개발중인 간이 프로젝트 입니다.
 
 본 서비스는 기업의 채용을 위한 웹 서비스 입니다.
 
 회사는 채용공고를 생성하고, 이에 사용자는 지원합니다.
-
 ## 사용 기술.
 Django, PostgreSQL, DRF, flake8, black formatter
 
