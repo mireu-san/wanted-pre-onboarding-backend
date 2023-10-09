@@ -12,7 +12,7 @@ class UserAPITest(APITestCase):
             "password": "testpass",
             "email": "testuser@example.com",  # 이메일 필드 추가
         }
-        response = self.client.post("/user/", data, format="json")
+        response = self.client.post("/user/users/", data, format="json")
         self.assertEqual(response.status_code, 201)
 
     def test_retrieve_user(self):
@@ -20,7 +20,7 @@ class UserAPITest(APITestCase):
         user = User.objects.create_user(
             email="retrieve@example.com", username="retrieveuser", password="testpass"
         )
-        response = self.client.get(f"/user/{user.id}/")
+        response = self.client.get(f"/user/users/{user.id}/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["username"], "retrieveuser")
 
@@ -31,7 +31,7 @@ class UserAPITest(APITestCase):
         )
         # API 호출 부분
         response = self.client.put(
-            f"/user/{user.id}/",
+            f"/user/users/{user.id}/",
             {
                 "username": "updateduser",
                 "email": "updated@example.com",
@@ -52,7 +52,7 @@ class UserAPITest(APITestCase):
         user = User.objects.create_user(
             email="delete@example.com", username="deleteuser", password="testpass"
         )
-        response = self.client.delete(f"/user/{user.id}/")
+        response = self.client.delete(f"/user/users/{user.id}/")
         self.assertEqual(response.status_code, 204)
         with self.assertRaises(User.DoesNotExist):
             User.objects.get(id=user.id)
